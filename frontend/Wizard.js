@@ -146,7 +146,21 @@ class Wizard extends Component {
 		}
 	}
 
+	checkPermission() {
+		const permissionGlobalConfig = globalConfig.checkPermissionsForSet()
+		if (!permissionGlobalConfig.hasPermission) {
+			this.setState({
+				'currentStep' : 0,
+				'validState': false
+			})
+		}
+		return permissionGlobalConfig.hasPermission
+	}
+
 	nextStep() {
+		if (!this.checkPermission()) {
+			return
+		}
 		if (this.state.currentStep == this.props.config.steps.length - 1) {
 			return
 		}
@@ -159,14 +173,15 @@ class Wizard extends Component {
 
 
 	previousStep() {
-		console.log('Prev')
+		if (!this.checkPermission()) {
+			return
+		}
 
 		if (this.state.currentStep == 0) {
 			return
 		}
 
 		this.setState({
-
 			'currentStep' : this.state.currentStep - 1
 		})
 	}
@@ -198,7 +213,9 @@ class Wizard extends Component {
 	}
 
 	async publish() {
-
+		if (!this.checkPermission()) {
+			return
+		}
 		this.setState({
 			'publishing' : true,
 			isErrorDialogOpen: false,
