@@ -22,4 +22,8 @@ export default `
 		text-align: center;
 		display: inline-block;
 	}
+
+	.askKey li:before {
+		margin-top: 4px;
+	}
 `;

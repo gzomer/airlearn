@@ -58,7 +58,7 @@ class AskKey extends Component {
 	render() {
 		return (
 			<div>
-				<ol>
+				<ol className="askKey">
 					<li>
 						<Heading size="xsmall">Go to your Airtable account </Heading>
 						<Text>Click <Link
