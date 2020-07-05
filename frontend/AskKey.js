@@ -72,7 +72,7 @@ class AskKey extends Component {
 					</li>
 					<li>
 						<Heading size="xsmall">Paste your API Key here</Heading>
-					    <Input name="airtableApiKey" value={this.state.airtableApiKey} onChange={e => this.setInputValue(e)} />
+					    <Input autoComplete="off" name="airtableApiKey" value={this.state.airtableApiKey} onChange={e => this.setInputValue(e)} />
 					    <Text size="small" textColor="light">Note: the API token will be visible to all collaborators.</Text>
 					</li>
 				</ol>

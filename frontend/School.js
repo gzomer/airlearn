@@ -154,16 +154,16 @@ class School extends Component {
 		return (
 			<div>
 				<FormField label="Name">
-			      <Input name="name" value={this.state.name} onChange={e => this.setInputValue(e)} />
+			      <Input autoComplete="off" name="name" value={this.state.name} onChange={e => this.setInputValue(e)} />
 			    </FormField>
 			    <FormField label="Description">
-			      <Input name="description" value={this.state.description} onChange={e => this.setInputValue(e)} />
+			      <Input autoComplete="off" name="description" value={this.state.description} onChange={e => this.setInputValue(e)} />
 			    </FormField>
 			    <FormField label="Domain">
-			      <Input name="domain" value={this.state.domain} onChange={e => this.setInputValue(e)} />
+			      <Input autoComplete="off" name="domain" value={this.state.domain} onChange={e => this.setInputValue(e)} />
 			    </FormField>
 			    {this.state.domain && <div className="domainText">
-			    	<Text>{this.state.domain}.airlearn.me</Text>
+			    	<Text autoComplete="off">{this.state.domain}.airlearn.me</Text>
 			    </div>}
 
 			    <Label>Theme</Label>
