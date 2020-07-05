@@ -6,6 +6,7 @@ import {
 	TablePickerSynced,
 	FieldPickerSynced,
 	FormField,
+	Text,
 	loadCSSFromString
 } from '@airtable/blocks/ui';
 
@@ -29,10 +30,13 @@ class ConfigureFields extends Component {
 				<div key={item.field}>
 					<FormField label={ item.field }>
 				      <FieldPickerSynced
+				      			shouldAllowPickingNone={item.optional}
 				      			onChange={this.props.onFieldChange}
 				      			table={this.props.table}
 				      			globalConfigKey={this.getConfigKeyField(item.field)}/>
+				      {item.description && <Text textColor="light">{item.description}</Text>}
 				    </FormField>
+
 				</div>
 			)
 		}.bind(this))
@@ -63,6 +67,11 @@ class ConfigurableTable extends Component {
 		const tableId = globalConfig.get(this.getConfigKeyTable())
 		const table = base.getTableByIdIfExists(tableId);
 
+		let hasTable = globalConfig.get(this.getConfigKeyTable())
+		if (!hasTable) {
+			this.tryToMatchTableAndFields()
+		}
+
 		if (this.state && this.state.table && this.state.table.id == tableId || table == null) {
 			return
 		}
@@ -73,6 +82,36 @@ class ConfigurableTable extends Component {
 		this.checkValidState(table)
 	}
 
+	async tryToMatchTableAndFields() {
+		const table = base.getTableByNameIfExists(this.props.config.table);
+		if (table == null) {
+			return
+		}
+
+		let updates = [
+		    {path: [this.getConfigKeyTable()], value: table.id},
+		]
+
+		for (let i=0;i < this.props.config.fields.length; i++) {
+			let item = this.props.config.fields[i]
+			let field = table.getFieldByNameIfExists(item.field)
+
+			if (!field) {
+				continue
+			}
+			updates.push({
+				path: ['config-' + this.props.config.table + '-' + item.field + '-Field'],
+				value: field.id
+			})
+		}
+
+		this.setState({
+			table: table
+		})
+
+		await globalConfig.setPathsAsync(updates)
+		this.checkValidState(table)
+	}
 
 	checkValidState(table) {
 
@@ -85,7 +124,9 @@ class ConfigurableTable extends Component {
 				let fieldConfig = globalConfig.get('config-' + this.props.config.table + '-' + item.field + '-Field')
 				let configIsFromTable = fieldIds.indexOf(fieldConfig) != -1
 
-				return !configIsFromTable || !fieldConfig
+				var isOptional = typeof item.optional != 'undefined' && item.optional
+
+				return (!configIsFromTable || !fieldConfig) && !isOptional
 			}.bind(this)).length == 0
 
 			let isValid = isValidFields && isValidTable
@@ -106,7 +147,7 @@ class ConfigurableTable extends Component {
 
 	render() {
 		return (
-			<div>
+			<div style={{'marginTop': '10px'}}>
 				<FormField label="Select table">
 					<TablePickerSynced onChange={this.updateTable.bind(this)} globalConfigKey={this.getConfigKeyTable()}/>
 				</FormField>

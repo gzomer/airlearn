@@ -100,7 +100,6 @@ class App extends Component {
 	}
 
 	componentDidMount() {
-		//globalConfig.setAsync('schoolPublished', false)
 		this.updateWizard()
 	}
 
